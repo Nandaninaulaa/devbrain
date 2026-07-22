@@ -1,0 +1,15 @@
+# secrets — never commit these
+backend/.env
+.env
+
+# python
+__pycache__/
+*.pyc
+backend/.venv/
+
+# vector + graph data
+backend/data/chroma/
+
+# node
+frontend/node_modules/
+frontend/dist/
