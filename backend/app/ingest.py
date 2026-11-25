@@ -14,31 +14,15 @@ from pathlib import Path
 from . import config
 from .chunking import chunk_file
 from .file_readers import read_file_text
+from .file_discovery import iter_ingestible_files
 from .vectorstore import add_chunks, collection_stats
-
-IGNORE_DIRS = {
-    "node_modules", ".git", "__pycache__", ".venv", "venv",
-    "dist", "build", ".next", "data", ".chroma",
-}
-
-
-def iter_ingestible_files(root: Path):
-    for path in root.rglob("*"):
-        if not path.is_file():
-            continue
-        if any(part in IGNORE_DIRS for part in path.parts):
-            continue
-        if path.suffix not in config.INGEST_EXTENSIONS:
-            continue
-        yield path
-
 
 def ingest_folder(folder: str) -> dict:
     root = Path(folder).resolve()
     if not root.exists():
         raise FileNotFoundError(f"Folder not found: {root}")
 
-    files = list(iter_ingestible_files(root))
+    files = list(iter_ingestible_files(root, config.INGEST_EXTENSIONS))
     total_chunks = 0
     total_files = 0
     skipped = []
